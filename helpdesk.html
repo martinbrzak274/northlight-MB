@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Helpdesk – Northlight Studio</title>
+  <link rel="stylesheet" href="helpdesk.css">
+</head>
+<body>
+  <header>
+    <a href="index.html">&larr; Northlight Studio</a>
+    <h1>Helpdesk</h1>
+    <p class="note">Demo with fake data. Tickets are saved only in this browser (localStorage).</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="new-ticket">
+      <h2 id="new-ticket">New ticket</h2>
+      <form id="ticket-form">
+        <label>Requester
+          <input id="requester" required maxlength="60">
+        </label>
+        <label>Issue
+          <textarea id="issue" required maxlength="300" rows="3"></textarea>
+        </label>
+        <label>Impact
+          <select id="impact">
+            <option value="3">High – many people or a client deadline</option>
+            <option value="2" selected>Medium – a team or one person blocked</option>
+            <option value="1">Low – minor inconvenience</option>
+          </select>
+        </label>
+        <label>Urgency
+          <select id="urgency">
+            <option value="3">High – needs fixing now</option>
+            <option value="2" selected>Medium – within the day</option>
+            <option value="1">Low – can wait</option>
+          </select>
+        </label>
+        <p>Priority: <strong id="preview"></strong></p>
+        <button type="submit">Create ticket</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="tickets">
+      <h2 id="tickets">Tickets</h2>
+      <p class="targets">Response targets: <b>P1</b> 1 h · <b>P2</b> 4 h · <b>P3</b> 24 h.
+        A ticket is <span class="overdue">Overdue</span> if it is still New after its target.</p>
+      <p><button type="button" id="reset" class="secondary">Reset demo data</button></p>
+      <ul id="list"></ul>
+    </section>
+  </main>
+
+  <script src="helpdesk.js"></script>
+</body>
+</html>
