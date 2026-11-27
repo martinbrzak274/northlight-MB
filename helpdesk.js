@@ -1,56 +1,32 @@
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'northlight-helpdesk-tickets';
-  var HOUR = 3600 * 1000;
-  var TARGET_HOURS = { P1: 1, P2: 4, P3: 24 };
-  var STATUSES = ['New', 'In progress', 'Resolved'];
-  var LEVELS = { 3: 'High', 2: 'Medium', 1: 'Low' };
+  // Storage rules (priority, response targets, seed data) live in helpdesk-store.js,
+  // shared with the contact form on index.html.
+  var Store = globalThis.HelpdeskStore;
+  var HOUR = Store.HOUR;
+  var TARGET_HOURS = Store.TARGET_HOURS;
+  var STATUSES = Store.STATUSES;
+  var LEVELS = Store.LEVELS;
+  var priorityFor = Store.priorityFor;
+  var isOverdue = Store.isOverdue;
 
-  // Impact and urgency (High=3, Medium=2, Low=1): sum 5-6 = P1, 4 = P2, 2-3 = P3.
-  function priorityFor(impact, urgency) {
-    var sum = Number(impact) + Number(urgency);
-    return sum >= 5 ? 'P1' : sum === 4 ? 'P2' : 'P3';
+  var memory = {};
+  var storage;
+  try {
+    storage = globalThis.localStorage;
+    storage.getItem(Store.STORAGE_KEY);
+  } catch (e) {
+    // localStorage blocked (for example a private window): keep tickets in memory for this visit.
+    storage = {
+      getItem: function (k) { return k in memory ? memory[k] : null; },
+      setItem: function (k, v) { memory[k] = String(v); }
+    };
   }
 
-  function isOverdue(t, now) {
-    return t.status === 'New' && now > t.createdAt + TARGET_HOURS[t.priority] * HOUR;
-  }
+  function save(data) { Store.save(storage, data); }
 
-  function seed() {
-    var now = Date.now();
-    function t(id, requester, issue, impact, urgency, status, hoursAgo) {
-      return {
-        id: id, requester: requester, issue: issue, impact: impact, urgency: urgency,
-        priority: priorityFor(impact, urgency), status: status,
-        createdAt: now - hoursAgo * HOUR
-      };
-    }
-    return [
-      t(1, 'Alex Example', 'Shared design drive is unreachable for the whole studio.', 3, 3, 'New', 2.5),
-      t(2, 'Sam Sample', 'Printer on floor 2 jams on A3 paper.', 1, 2, 'New', 6),
-      t(3, 'Jordan Demo', 'Figma licence expired for one designer.', 2, 3, 'In progress', 3),
-      t(4, 'Casey Test', 'Wi-Fi drops in the small meeting room.', 2, 2, 'New', 1),
-      t(5, 'Riley Placeholder', 'Request for a second monitor.', 1, 1, 'Resolved', 30),
-      t(6, 'Taylor Fake', 'Slow laptop when exporting large files.', 2, 1, 'New', 5)
-    ];
-  }
-
-  function load() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) { /* fall through to seed */ }
-    var data = seed();
-    save(data);
-    return data;
-  }
-
-  function save(data) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { /* ignore */ }
-  }
-
-  var tickets = load();
+  var tickets = Store.load(storage);
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -137,7 +113,7 @@
   });
 
   document.getElementById('reset').addEventListener('click', function () {
-    tickets = seed();
+    tickets = Store.seed();
     save(tickets);
     render();
   });

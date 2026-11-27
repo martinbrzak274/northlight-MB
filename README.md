@@ -4,11 +4,11 @@ A plain HTML website for Northlight Studio, a 25-person design studio.
 
 ## Structure
 
-- `index.html`: the home page, with a heading, a short description and links to the pages below.
-- `helpdesk.html`, `helpdesk.js`, `helpdesk.css`: a demo helpdesk (fake data, tickets saved in localStorage).
+- `index.html`, `contact.js`, `images/`: the home page with a header, three services, an FAQ (with JSON-LD) and a contact form. A sent form creates a ticket in the help desk storage of the visitor's browser; nothing is sent over the internet.
+- `helpdesk.html`, `helpdesk.js`, `helpdesk.css`, `helpdesk-store.js`: a demo helpdesk (fake data, tickets saved in localStorage). `helpdesk-store.js` holds the storage and priority rules shared with the contact form.
 - `troubleshoot.html`: a click-through decision tree for "no internet".
 - `staff.html`, `staff.js`: a learning model of staff accounts (see below).
-- `tests/staff.test.js`: tests for `staff.js`.
+- `tests/`: tests for the staff page and for the home page and contact form (`node tests/index.test.js`).
 - `tools/`: read-only Node.js scripts (see below).
 - `.github/workflows/deploy.yml`: GitHub Actions workflow that deploys the site to GitHub Pages.
 
