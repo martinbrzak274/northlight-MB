@@ -8,13 +8,37 @@ A plain HTML website for Northlight Studio, a 25-person design studio.
 - `helpdesk.html`, `helpdesk.js`, `helpdesk.css`, `helpdesk-store.js`: a demo helpdesk (fake data, tickets saved in localStorage). `helpdesk-store.js` holds the storage and priority rules shared with the contact form.
 - `crm.html`, `crm.js`: a small demo CRM (see below).
 - `automation.html`, `automation.js`, `rules.json`: rules that run when the website form is sent (see below).
+- `settings.html`, `settings.js`, `config.js`, `health.json`: version, settings and the Export all data button (see below).
 - `troubleshoot.html`: a click-through decision tree for "no internet".
 - `staff.html`, `staff.js`: a learning model of staff accounts (see below).
-- `tests/`: tests for the staff page, the CRM, and the home page and contact form, and the automation rules (for example `node tests/index.test.js`).
-- `tools/`: read-only Node.js scripts (see below).
-- `.github/workflows/deploy.yml`: GitHub Actions workflow that deploys the site to GitHub Pages.
+- `northlight.cloud.json`: a description of the cloud resources (see below).
+- `tests/`: tests for the pages, for example `node tests/index.test.js`.
+- `tools/`: read-only Node.js scripts and their tests (see below).
+- `.github/workflows/deploy.yml`: GitHub Actions workflow that checks the cloud description and then deploys the site to GitHub Pages.
 
 There are no frameworks, no dependencies and no build step. The repository root is published as it is.
+
+## Settings, health and data export
+
+- `health.json` holds the name, version and build date. When the workflow deploys, it writes the date of that deploy into the deployed copy of `health.json` (the file in the repository keeps its committed date). Change the version by hand when you release.
+- `config.js` holds the settings the site uses: the app name, the prefix of the localStorage keys (`northlight-`), where `health.json` is, and the export file settings. No secrets belong in it.
+- `settings.html` shows the version, the settings and the records saved in this browser. **Export all data** downloads every localStorage record as one JSON file, `northlight-export-<date>-<time>.json`. The file is made in the browser and is not sent anywhere.
+- The export lists every key in the browser's storage, not only ours. On GitHub Pages, other projects under the same account share that storage, so they appear too, marked as not from Northlight. The file also contains the fake staff password hashes and code secrets, so keep an export private if you ever use real data.
+- Pages opened from disk cannot read `health.json`, so the page then shows "unknown" and says why.
+
+Run the tests with `node tests/settings.test.js`.
+
+## Cloud description and checks
+
+`northlight.cloud.json` describes a resource group, a web app and a storage account, each with a name and the tags `owner`, `env` and `cost-center`. **It only describes them: nothing is created from it**, and the site itself is deployed to GitHub Pages.
+
+`node tools/check-cloud.js` checks the file and exits with an error (code 1) if anything is wrong. It prints PASS or FAIL for each check:
+
+- every resource has the three tags, each spelled exactly and not empty, and the `env` tag is `dev`, `test` or `prod` and matches the environment of the file
+- every name follows the Azure limits (length and allowed characters) and the convention `rg-<project>-<env>-<region>`, `app-<project>-<env>-<region>` and `st<project><env><region>`, with an optional short suffix
+- names are unique, every resource points at a resource group in the file, and the file has a resource group, a web app and a storage account
+
+The naming rules and tags are my choices and sit together at the top of `tools/check-cloud.js`, so change them there. The workflow runs this check first, in its own job. If it fails, the deploy job does not start. Run the tests with `node tools/test/check-cloud.test.js`.
 
 ## Automation
 

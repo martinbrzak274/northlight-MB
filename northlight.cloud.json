@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "description": "A description of the cloud resources for Northlight Studio. It only describes them: nothing is created from this file. Checked by tools/check-cloud.js.",
+  "project": "northlight",
+  "environment": "prod",
+  "location": "westeurope",
+  "resources": [
+    {
+      "type": "resourceGroup",
+      "name": "rg-northlight-prod-we",
+      "tags": {
+        "owner": "it-team@example.com",
+        "env": "prod",
+        "cost-center": "CC-1042"
+      }
+    },
+    {
+      "type": "webApp",
+      "name": "app-northlight-prod-we",
+      "resourceGroup": "rg-northlight-prod-we",
+      "properties": { "runtime": "static", "httpsOnly": true },
+      "tags": {
+        "owner": "it-team@example.com",
+        "env": "prod",
+        "cost-center": "CC-1042"
+      }
+    },
+    {
+      "type": "storageAccount",
+      "name": "stnorthlightprodwe",
+      "resourceGroup": "rg-northlight-prod-we",
+      "properties": { "sku": "Standard_LRS", "kind": "StorageV2" },
+      "tags": {
+        "owner": "it-team@example.com",
+        "env": "prod",
+        "cost-center": "CC-1042"
+      }
+    }
+  ]
+}

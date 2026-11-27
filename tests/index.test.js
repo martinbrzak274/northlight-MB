@@ -76,7 +76,7 @@ test('no outside scripts, styles, fonts or images', () => {
 
 test('header links to the other pages, and all links and anchors resolve', () => {
   const header = /<header[\s\S]*?<\/header>/.exec(html)[0];
-  for (const page of ['helpdesk.html', 'crm.html', 'automation.html', 'troubleshoot.html', 'staff.html']) {
+  for (const page of ['helpdesk.html', 'crm.html', 'automation.html', 'settings.html', 'troubleshoot.html', 'staff.html']) {
     assert.ok(header.includes(`href="${page}"`), 'header missing ' + page);
     assert.ok(fs.existsSync(path.join(ROOT, page)), page + ' does not exist');
   }

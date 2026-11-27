@@ -7,22 +7,43 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  # Runs first. If the cloud description has a missing tag or a bad name, this job fails
+  # and the deploy job below never starts.
+  check:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check the cloud description (names and tags)
+        run: node tools/check-cloud.js
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Only the deployed copy is changed: the file in the repository keeps its committed date.
+      - name: Stamp the build date in health.json
+        run: |
+          jq --arg date "$(date -u +%F)" '.buildDate = $date' health.json > health.stamped.json
+          mv health.stamped.json health.json
+          cat health.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
