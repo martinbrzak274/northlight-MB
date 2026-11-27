@@ -14,10 +14,24 @@ A plain HTML website for Northlight Studio, a 25-person design studio.
 - `northlight.cloud.json`: a description of the cloud resources (see below).
 - `tests/`: tests for the pages, for example `node tests/index.test.js`. `tests/e2e/` holds the browser tests (see below).
 - `tools/`: read-only Node.js scripts and their tests (see below), and `tools/serve.js`, a small local web server.
+- `glass.css`, `glass.js`: the design of every page (see below).
 - `package.json`, `package-lock.json`, `playwright.config.js`: only for the browser tests.
 - `.github/workflows/deploy.yml`: GitHub Actions workflow that checks the cloud description, runs the browser tests and then deploys the site to GitHub Pages.
 
 The site itself has no frameworks, no dependencies and no build step. The repository root is published as it is. Playwright is a development dependency for the tests only.
+
+## Design: glass
+
+Every page shares one stylesheet, `glass.css`, and one small script, `glass.js`.
+
+- **Glass, used with care.** Frosted blur is on the header, the hero picture, the service cards, the panels, the chart tooltip and the troubleshooting card. Items inside a panel (list rows, FAQ rows) use a lighter see-through fill without blur, which looks cleaner and costs far less to draw. Where a browser has no `backdrop-filter`, or the visitor asks for less transparency, the surfaces become solid.
+- **Light and dark.** Both follow the visitor's system setting. Every colour is a variable at the top of `glass.css`.
+- **Type.** A modern system font stack with a fluid size scale. The content security policy allows no outside fonts.
+- **Motion.** Slowly drifting ambient light, the page easing in at load, sections easing in as they are scrolled to, floating orbs, a hero picture that leans towards the pointer, buttons that lift, shimmer and press, a soft light that follows the pointer over cards, smooth opening of the FAQ, and chart bars that grow in. Only `transform` and `opacity` are animated. Everything stops for visitors who prefer reduced motion, and everything is visible without JavaScript.
+- **Performance.** Measured without a GPU, a smoothly drifting background behind many blurred surfaces took the busiest page from 60 down to 43 frames per second, because every blurred surface is redrawn each time something behind it changes. The ambient light therefore moves in about four tiny steps a second, which looks the same for soft light and keeps the page at 60. The hero picture reacts to the pointer instead of floating on its own.
+- **Phones.** The menu becomes a row that scrolls sideways, tap targets are at least 40 px, and no page scrolls sideways at 360 px.
+
+To change the look, start with the variables at the top of `glass.css`. The chart's single colour is set in `crm.html`.
 
 ## Browser tests and security checks
 
@@ -36,6 +50,8 @@ Every browser test also fails if the page breaks its content security policy, th
 - `SITE_URL=https://example.github.io/northlight-MB/ npx playwright test` tests a site that is already published instead. The local server is then not started. A folder opened from disk also works, for example `SITE_URL=file:///C:/path/to/northlight-MB/`.
 - `PW_CHANNEL=msedge` (or `chrome`) uses a browser that is already installed, so nothing needs to be downloaded.
 - `npx playwright test --project=repo` runs only the repository check, which needs no browser.
+- The tests run with reduced motion, which the pages honour, so animation timing cannot make them flaky. `tests/e2e/motion.spec.js` turns motion back on for the animated side. At most 4 browsers (2 on CI) run at once: the pages are graphical, and many browsers at once on one computer starve each other.
+- `tests/e2e/responsive.spec.js` opens every page at 360, 820 and 1280 px wide, and checks that nothing scrolls sideways, buttons are big enough to tap, and light and dark both work.
 - `node tests/csp.test.js` and `node tests/serve.test.js` are quick checks without a browser.
 
 The workflow runs the browser tests in a `test` job, in parallel with the cloud check. If either fails, the site is not deployed. The report is kept as a workflow artifact for 7 days.

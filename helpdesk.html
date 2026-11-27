@@ -5,17 +5,38 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Helpdesk – Northlight Studio</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="glass.css">
   <link rel="stylesheet" href="helpdesk.css">
 </head>
 <body>
-  <header>
-    <a href="index.html">&larr; Northlight Studio</a>
-    <h1>Helpdesk</h1>
-    <p class="note">Demo with fake data. Tickets are saved only in this browser (localStorage).</p>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="logo" aria-hidden="true"></span>Northlight Studio</a>
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="helpdesk.html" aria-current="page">Help desk</a></li>
+          <li><a href="crm.html">CRM</a></li>
+          <li><a href="automation.html">Automation</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="troubleshoot.html">No internet?</a></li>
+          <li><a href="staff.html">Staff accounts</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section aria-labelledby="new-ticket">
+  <main id="main" class="page">
+    <div class="page-head">
+      <a class="back" href="index.html">&larr; Northlight Studio</a>
+      <h1>Helpdesk</h1>
+      <p class="note">Demo with fake data. Tickets are saved only in this browser (localStorage).</p>
+    </div>
+
+    <section class="panel" aria-labelledby="new-ticket" data-reveal>
       <h2 id="new-ticket">New ticket</h2>
       <form id="ticket-form">
         <label>Requester
@@ -43,7 +64,7 @@
       </form>
     </section>
 
-    <section aria-labelledby="tickets">
+    <section class="panel" aria-labelledby="tickets" data-reveal>
       <h2 id="tickets">Tickets</h2>
       <p class="targets">Response targets: <b>P1</b> 1 h · <b>P2</b> 4 h · <b>P3</b> 24 h.
         A ticket is <span class="overdue">Overdue</span> if it is still New after its target.</p>
@@ -54,5 +75,6 @@
 
   <script src="helpdesk-store.js"></script>
   <script src="helpdesk.js"></script>
+  <script src="glass.js"></script>
 </body>
 </html>

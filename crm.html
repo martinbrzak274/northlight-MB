@@ -7,148 +7,43 @@
   <title>CRM – Northlight Studio</title>
   <meta name="description" content="A small demo CRM with leads, accounts, contacts, opportunities and support cases. Fake data only.">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="glass.css">
   <style>
-    :root {
-      color-scheme: light;
-      --surface-1: #ffffff;
-      --page: #f9f9f9;
-      --text-primary: #191919;
-      --text-secondary: #666666;
-      --series-1: #257de0;
-      --grid: #e7e7e7;
-      --baseline: #c2c2c2;
-      --border: rgba(11, 11, 11, .14);
-      --link: #0b4fb3;
-      --brand: #0d1b3d;
-      --on-brand: #ffffff;
-      --bad: #b3261e;
-      --good: #006c10;
-      --soft: #f1f3f7;
-    }
+    /* The chart uses one colour for every bar. Everything else comes from glass.css. */
+    :root { --series-1: #257de0; }
     @media (prefers-color-scheme: dark) {
-      :root:where(:not([data-theme="light"])) {
-        color-scheme: dark;
-        --surface-1: #191919;
-        --page: #0b0b0b;
-        --text-primary: #efefef;
-        --text-secondary: #9c9c9c;
-        --series-1: #338ced;
-        --grid: #303030;
-        --baseline: #474747;
-        --border: rgba(255, 255, 255, .16);
-        --link: #7db4ff;
-        --brand: #3b5fa8;
-        --on-brand: #ffffff;
-        --bad: #ff8a80;
-        --good: #53c556;
-        --soft: #222222;
-      }
+      :root:where(:not([data-theme="light"])) { --series-1: #338ced; }
     }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --surface-1: #191919;
-      --page: #0b0b0b;
-      --text-primary: #efefef;
-      --text-secondary: #9c9c9c;
-      --series-1: #338ced;
-      --grid: #303030;
-      --baseline: #474747;
-      --border: rgba(255, 255, 255, .16);
-      --link: #7db4ff;
-      --brand: #3b5fa8;
-      --on-brand: #ffffff;
-      --bad: #ff8a80;
-      --good: #53c556;
-      --soft: #222222;
-    }
-
-    * { box-sizing: border-box; }
-    [hidden] { display: none !important; }
-    body {
-      margin: 0;
-      font: 1rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      color: var(--text-primary);
-      background: var(--page);
-    }
-    .wrap { max-width: 56rem; margin: 0 auto; padding: 0 1rem 3rem; }
-    a { color: var(--link); }
-    :focus-visible { outline: 3px solid #ef8f00; outline-offset: 2px; }
-    h1 { font-size: clamp(1.7rem, 6vw, 2.4rem); margin: 1rem 0 .25rem; }
-    h2 { font-size: 1.35rem; margin: 0 0 .75rem; }
-    section { background: var(--surface-1); border: 1px solid var(--border); border-radius: .6rem; padding: 1rem; margin: 1rem 0; }
-    .note { color: var(--text-secondary); font-size: .9rem; }
-    #status { min-height: 1.5rem; font-weight: 600; margin: .5rem 0; }
-    #status.bad { color: var(--bad); }
-    #status.good { color: var(--good); }
-    .jump { display: flex; flex-wrap: wrap; gap: 0 .5rem; list-style: none; padding: 0; margin: .5rem 0; }
-    .jump a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .5rem; }
-
-    /* Lists */
-    ul.items { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
-    .item { border: 1px solid var(--border); border-radius: .5rem; padding: .7rem .85rem; background: var(--surface-1); }
-    .item.done { opacity: .65; }
-    li.empty { color: var(--text-secondary); }
-    .row { display: flex; flex-wrap: wrap; gap: .25rem .6rem; align-items: baseline; }
-    .meta { color: var(--text-secondary); font-size: .88rem; margin: .2rem 0 .4rem; }
-    .badge { font-size: .78rem; font-weight: 700; padding: .05rem .5rem; border-radius: .3rem; background: var(--soft); border: 1px solid var(--border); }
-    .overdue { font-size: .78rem; font-weight: 700; padding: .05rem .5rem; border-radius: .3rem; color: var(--bad); border: 2px solid var(--bad); }
-    label { display: block; font-weight: 600; margin-bottom: .25rem; }
-    .item label { display: inline-block; font-weight: 400; margin: .25rem 0 0; }
-
-    /* Forms */
-    details.form { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: .5rem; }
-    summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
-    form { display: grid; gap: .9rem; max-width: 30rem; margin-top: .5rem; }
-    input, select, textarea, button { font: inherit; font-size: 1rem; }
-    input, select {
-      width: 100%; padding: .6rem; border: 1px solid #767d8c; border-radius: .4rem;
-      background: var(--surface-1); color: var(--text-primary);
-    }
-    .item select { width: auto; padding: .35rem .5rem; }
-    input[aria-invalid="true"], select[aria-invalid="true"] { border: 2px solid var(--bad); }
-    .error { color: var(--bad); font-weight: 600; margin: .3rem 0 0; font-size: .92rem; }
-    .error::before { content: "\26A0\FE0E  "; }
-    button {
-      min-height: 44px; padding: .5rem 1.1rem; cursor: pointer; border: 0; border-radius: .4rem;
-      background: var(--brand); color: var(--on-brand); font-weight: 600; width: fit-content;
-    }
-    .item button { min-height: 40px; }
-    button.secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border); font-weight: 400; }
-
-    /* Chart (single series: one colour for every bar) */
-    .chart-wrap { position: relative; max-width: 30rem; }
-    .chart { display: block; width: 100%; height: auto; font-family: inherit; }
-    .chart .grid { stroke: var(--grid); stroke-width: 1; }
-    .chart .axis { stroke: var(--baseline); stroke-width: 1; }
-    .chart .tick { fill: var(--text-secondary); font-size: 12px; }
-    .chart .stage { fill: var(--text-primary); font-size: 14px; }
-    .chart .value { fill: var(--text-primary); font-size: 14px; font-weight: 600; }
+    :root[data-theme="dark"] { --series-1: #338ced; }
     .chart .bar { fill: var(--series-1); }
-    .chart .row:hover .bar, .chart .row:focus .bar { opacity: .78; }
-    .chart .row { outline: none; }
-    .chart .hit { fill: transparent; }
-    .chart .row:focus .hit { stroke: var(--text-secondary); stroke-width: 1; }
-    .chart .empty { fill: var(--text-secondary); font-size: 12px; pointer-events: none; }
-    .tip {
-      position: absolute; pointer-events: none; display: flex; flex-direction: column;
-      background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
-      border-radius: .4rem; padding: .3rem .6rem; font-size: .85rem; white-space: nowrap;
-      transform: translate(10px, -50%); box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
-    }
-    .tip.flip { transform: translate(calc(-100% - 10px), -50%); }
-    .tip strong { font-size: 1rem; }
-    .tip span { color: var(--text-secondary); }
-    table { border-collapse: collapse; width: 100%; max-width: 30rem; font-size: .92rem; margin-top: .5rem; }
-    th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid var(--border); }
-    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-    tr.total td { font-weight: 700; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <p><a href="index.html">&larr; Northlight Studio</a></p>
-    <h1>CRM</h1>
-    <p class="note">Demo with fake data. Everything is saved only in this browser (localStorage).</p>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="logo" aria-hidden="true"></span>Northlight Studio</a>
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="helpdesk.html">Help desk</a></li>
+          <li><a href="crm.html" aria-current="page">CRM</a></li>
+          <li><a href="automation.html">Automation</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="troubleshoot.html">No internet?</a></li>
+          <li><a href="staff.html">Staff accounts</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="page-head">
+      <a class="back" href="index.html">&larr; Northlight Studio</a>
+      <h1>CRM</h1>
+      <p class="note">Demo with fake data. Everything is saved only in this browser (localStorage).</p>
+    </div>
     <p id="status" role="status" aria-live="polite"></p>
 
     <nav aria-label="On this page">
@@ -161,7 +56,7 @@
       </ul>
     </nav>
 
-    <section id="pipeline" aria-labelledby="pipeline-title">
+    <section id="pipeline" class="panel" aria-labelledby="pipeline-title" data-reveal>
       <h2 id="pipeline-title">Opportunities by stage</h2>
       <p class="note" id="chart-summary"></p>
       <div class="chart-wrap">
@@ -170,14 +65,16 @@
       </div>
       <details>
         <summary>View as table</summary>
-        <table>
-          <thead><tr><th>Stage</th><th class="num">Opportunities</th><th class="num">Value</th></tr></thead>
-          <tbody id="chart-table"></tbody>
-        </table>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Stage</th><th class="num">Opportunities</th><th class="num">Value</th></tr></thead>
+            <tbody id="chart-table"></tbody>
+          </table>
+        </div>
       </details>
     </section>
 
-    <section id="leads" aria-labelledby="leads-title">
+    <section id="leads" class="panel" aria-labelledby="leads-title" data-reveal>
       <h2 id="leads-title">Leads</h2>
       <p class="note">Convert turns a lead into an account, a contact and an opportunity. A lead can be converted once.</p>
       <ul class="items" id="lead-list"></ul>
@@ -220,18 +117,18 @@
       </details>
     </section>
 
-    <section id="accounts" aria-labelledby="accounts-title">
+    <section id="accounts" class="panel" aria-labelledby="accounts-title" data-reveal>
       <h2 id="accounts-title">Accounts and contacts</h2>
       <ul class="items" id="account-list"></ul>
     </section>
 
-    <section id="opps" aria-labelledby="opps-title">
+    <section id="opps" class="panel" aria-labelledby="opps-title" data-reveal>
       <h2 id="opps-title">Opportunities</h2>
       <p class="note">Stages: Lead, Qualified, Quote, Won, Lost. A new opportunity starts at Lead.</p>
       <ul class="items" id="opp-list"></ul>
     </section>
 
-    <section id="cases" aria-labelledby="cases-title">
+    <section id="cases" class="panel" aria-labelledby="cases-title" data-reveal>
       <h2 id="cases-title">Support cases</h2>
       <p class="note">A case is Overdue when it is still open after its due time.</p>
       <ul class="items" id="case-list"></ul>
@@ -268,9 +165,10 @@
     </section>
 
     <p><button type="button" id="reset" class="secondary">Reset demo data</button></p>
-  </div>
+  </main>
 
   <script src="helpdesk-store.js"></script>
   <script src="crm.js"></script>
+  <script src="glass.js"></script>
 </body>
 </html>

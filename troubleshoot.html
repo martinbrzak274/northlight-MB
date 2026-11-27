@@ -5,38 +5,46 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>No internet – Northlight Studio</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 40rem;
-      margin: 2rem auto;
-      padding: 0 1rem;
-      line-height: 1.6;
-      color: #1a1a1a;
-    }
-    .note { color: #555; font-size: .9rem; }
-    #card { border: 1px solid #ccc; border-radius: 6px; padding: 1rem 1.25rem; margin: 1rem 0; }
-    #card.good { border-color: #2e7d32; border-left-width: 6px; }
-    #card.end { border-color: #ef8f00; border-left-width: 6px; }
-    .step { color: #555; font-size: .85rem; margin: 0 0 .25rem; }
-    .answers, .nav { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
-    button { font: inherit; padding: .4rem 1rem; cursor: pointer; }
-    button.secondary { font-size: .85rem; padding: .25rem .75rem; }
-  </style>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="glass.css">
 </head>
 <body>
-  <a href="index.html">&larr; Northlight Studio</a>
-  <h1>No internet: what to try</h1>
-  <p class="note">Answer each question. Nothing here changes any setting; it only tells you what to check.</p>
+  <a class="skip" href="#main">Skip to content</a>
 
-  <div id="card" aria-live="polite"></div>
-  <div class="nav">
-    <button type="button" id="back" class="secondary">Back</button>
-    <button type="button" id="restart" class="secondary">Start over</button>
-  </div>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="logo" aria-hidden="true"></span>Northlight Studio</a>
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="helpdesk.html">Help desk</a></li>
+          <li><a href="crm.html">CRM</a></li>
+          <li><a href="automation.html">Automation</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="troubleshoot.html" aria-current="page">No internet?</a></li>
+          <li><a href="staff.html">Staff accounts</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <p class="note">Tip: <code>node tools/network-doctor.js</code> runs these checks for you and names the first failing step.</p>
+  <main id="main" class="page">
+    <div class="page-head">
+      <a class="back" href="index.html">&larr; Northlight Studio</a>
+      <h1>No internet: what to try</h1>
+      <p class="note">Answer each question. Nothing here changes any setting; it only tells you what to check.</p>
+    </div>
+
+    <div id="card" aria-live="polite"></div>
+    <div class="nav">
+      <button type="button" id="back" class="secondary">Back</button>
+      <button type="button" id="restart" class="secondary">Start over</button>
+    </div>
+
+    <p class="note">Tip: <code>node tools/network-doctor.js</code> runs these checks for you and names the first failing step.</p>
+  </main>
 
   <script src="troubleshoot.js"></script>
+  <script src="glass.js"></script>
 </body>
 </html>

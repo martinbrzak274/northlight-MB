@@ -7,125 +7,65 @@
   <title>Automation – Northlight Studio</title>
   <meta name="description" content="The outbox and the log of the demo automation rules. Fake data only; nothing is really sent.">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-  <style>
-    :root {
-      color-scheme: light;
-      --surface-1: #ffffff;
-      --page: #f9f9f9;
-      --text-primary: #191919;
-      --text-secondary: #666666;
-      --border: rgba(11, 11, 11, .14);
-      --link: #0b4fb3;
-      --brand: #0d1b3d;
-      --on-brand: #ffffff;
-      --bad: #b3261e;
-      --good: #006c10;
-      --soft: #f1f3f7;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:where(:not([data-theme="light"])) {
-        color-scheme: dark;
-        --surface-1: #191919;
-        --page: #0b0b0b;
-        --text-primary: #efefef;
-        --text-secondary: #9c9c9c;
-        --border: rgba(255, 255, 255, .16);
-        --link: #7db4ff;
-        --brand: #3b5fa8;
-        --bad: #ff8a80;
-        --good: #53c556;
-        --soft: #222222;
-      }
-    }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --surface-1: #191919;
-      --page: #0b0b0b;
-      --text-primary: #efefef;
-      --text-secondary: #9c9c9c;
-      --border: rgba(255, 255, 255, .16);
-      --link: #7db4ff;
-      --brand: #3b5fa8;
-      --bad: #ff8a80;
-      --good: #53c556;
-      --soft: #222222;
-    }
-
-    * { box-sizing: border-box; }
-    [hidden] { display: none !important; }
-    body {
-      margin: 0;
-      font: 1rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      color: var(--text-primary);
-      background: var(--page);
-    }
-    .wrap { max-width: 56rem; margin: 0 auto; padding: 0 1rem 3rem; }
-    a { color: var(--link); }
-    :focus-visible { outline: 3px solid #ef8f00; outline-offset: 2px; }
-    h1 { font-size: clamp(1.7rem, 6vw, 2.4rem); margin: 1rem 0 .25rem; }
-    h2 { font-size: 1.35rem; margin: 0 0 .5rem; }
-    section { background: var(--surface-1); border: 1px solid var(--border); border-radius: .6rem; padding: 1rem; margin: 1rem 0; }
-    .note { color: var(--text-secondary); font-size: .9rem; }
-    .notice { border: 2px solid var(--text-secondary); border-radius: .5rem; padding: .6rem .9rem; margin: 1rem 0; }
-    #status { min-height: 1.5rem; font-weight: 600; margin: .5rem 0; }
-    #status.bad { color: var(--bad); }
-    #status.good { color: var(--good); }
-    #rules-problems { border: 2px solid var(--bad); border-radius: .5rem; padding: .6rem .9rem .6rem 2rem; color: var(--bad); font-weight: 600; margin: .5rem 0; }
-
-    ul.items, ol.items { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
-    .item, .logline { border: 1px solid var(--border); border-radius: .5rem; padding: .6rem .85rem; background: var(--surface-1); }
-    .item.done { opacity: .65; }
-    .logline.error { border: 2px solid var(--bad); }
-    li.empty { color: var(--text-secondary); }
-    .row { display: flex; flex-wrap: wrap; gap: .25rem .6rem; align-items: baseline; }
-    .meta { color: var(--text-secondary); font-size: .88rem; }
-    .desc { margin: .25rem 0 0; overflow-wrap: anywhere; }
-    .badge { font-size: .78rem; font-weight: 700; padding: .05rem .5rem; border-radius: .3rem; background: var(--soft); border: 1px solid var(--border); }
-    .badge.error { color: var(--bad); border: 2px solid var(--bad); background: transparent; }
-    .badge.ok { color: var(--good); }
-    button {
-      font: inherit; min-height: 44px; padding: .5rem 1.1rem; cursor: pointer; border-radius: .4rem;
-      background: transparent; color: var(--text-primary); border: 1px solid var(--border);
-    }
-    .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .5rem; }
-    .head h2 { margin: 0; }
-  </style>
+  <link rel="stylesheet" href="glass.css">
 </head>
 <body>
-  <div class="wrap">
-    <p><a href="index.html">&larr; Northlight Studio</a></p>
-    <h1>Automation</h1>
-    <p class="note">Demo with fake data. When the website form on the home page is sent, the rules in <code>rules.json</code> run.</p>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="logo" aria-hidden="true"></span>Northlight Studio</a>
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="helpdesk.html">Help desk</a></li>
+          <li><a href="crm.html">CRM</a></li>
+          <li><a href="automation.html" aria-current="page">Automation</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="troubleshoot.html">No internet?</a></li>
+          <li><a href="staff.html">Staff accounts</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="page-head">
+      <a class="back" href="index.html">&larr; Northlight Studio</a>
+      <h1>Automation</h1>
+      <p class="note">Demo with fake data. When the website form on the home page is sent, the rules in <code>rules.json</code> run.</p>
+    </div>
     <div class="notice" role="note"><strong>Nothing is really sent.</strong> The outbox is only a list saved in this browser (localStorage). No email, message or alert leaves your computer.</div>
     <p id="status" role="status" aria-live="polite"></p>
 
-    <section aria-labelledby="rules-title">
+    <section class="panel" aria-labelledby="rules-title" data-reveal>
       <h2 id="rules-title">Rules</h2>
       <p class="note" id="rules-source">Loading the rules...</p>
       <ul id="rules-problems" hidden></ul>
       <ul class="items" id="rules-list"></ul>
     </section>
 
-    <section aria-labelledby="outbox-title">
+    <section class="panel" aria-labelledby="outbox-title" data-reveal>
       <div class="head">
         <h2 id="outbox-title">Outbox (<span id="outbox-count">0</span>)</h2>
-        <button type="button" id="clear-outbox">Clear outbox</button>
+        <button type="button" id="clear-outbox" class="secondary">Clear outbox</button>
       </div>
       <ul class="items" id="outbox-list"></ul>
     </section>
 
-    <section aria-labelledby="log-title">
+    <section class="panel" aria-labelledby="log-title" data-reveal>
       <div class="head">
         <h2 id="log-title">Log (<span id="log-count">0</span>)</h2>
-        <button type="button" id="clear-log">Clear log</button>
+        <button type="button" id="clear-log" class="secondary">Clear log</button>
       </div>
       <p class="note">One line for each event and for every rule that ran. Newest first.</p>
       <ol class="items" id="log-list"></ol>
     </section>
-  </div>
+  </main>
 
   <script src="helpdesk-store.js"></script>
   <script src="crm.js"></script>
   <script src="automation.js"></script>
+  <script src="glass.js"></script>
 </body>
 </html>

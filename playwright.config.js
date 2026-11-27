@@ -15,11 +15,18 @@ const useLocalServer = !process.env.SITE_URL;
 module.exports = defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
+  // The pages are graphical (blur, gradients, animation). Many browsers at once on one machine starve each other
+  // and tests time out while loading, so keep the number small.
+  workers: process.env.CI ? 2 : 4,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL,
+    // The pages animate (ambient light, scroll reveals, floating shapes). The tests check what the pages do, not
+    // how they move, so they run with reduced motion, which the pages honour. tests/e2e/motion.spec.js turns
+    // motion back on to check the animated side.
+    reducedMotion: 'reduce',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure'
   },

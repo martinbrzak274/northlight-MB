@@ -462,6 +462,6 @@ test('automation.html is a phone-friendly page that says nothing is sent, with n
   assert.match(html, /Nothing is really sent/);
   assert.equal(/<(?:script|link|img)[^>]+(?:src|href)="(?:https?:)?\/\//.test(html), false);
   const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(scripts, ['helpdesk-store.js', 'crm.js', 'automation.js']);
+  assert.deepEqual(scripts, ['helpdesk-store.js', 'crm.js', 'automation.js', 'glass.js'], 'glass.js (design effects) loads last');
   for (const s of scripts) assert.ok(fs.existsSync(path.join(ROOT, s)));
 });

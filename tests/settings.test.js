@@ -241,7 +241,7 @@ test('settings.html is a phone-friendly page with the warnings, and no outside r
   assert.match(html, /not sent anywhere/);
   assert.equal(/<(?:script|link|img)[^>]+(?:src|href)="(?:https?:)?\/\//.test(html), false);
   const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(scripts, ['config.js', 'settings.js'], 'config.js loads before settings.js');
+  assert.deepEqual(scripts, ['config.js', 'settings.js', 'glass.js'], 'config.js loads before settings.js, and glass.js (design effects) last');
   for (const s of scripts) assert.ok(fs.existsSync(path.join(ROOT, s)));
 });
 
