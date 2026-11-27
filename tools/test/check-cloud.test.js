@@ -327,6 +327,20 @@ test('the workflow runs the browser tests in a job that the deploy job also wait
   assert.ok(workflow.indexOf('  test:') < workflow.indexOf('  deploy:'));
 });
 
+test('re-running a job cannot clash with the artifacts of an earlier attempt', () => {
+  // An artifact name can be used once per run, and deploy-pages refuses two artifacts with the same name.
+  const deploy = section('deploy');
+  const upload = /actions\/upload-pages-artifact@v\d+\n\s+with:\n\s+name: (github-pages-\$\{\{ github\.run_attempt \}\})/.exec(deploy);
+  const use = /actions\/deploy-pages@v\d+\n\s+with:\n\s+artifact_name: (github-pages-\$\{\{ github\.run_attempt \}\})/.exec(deploy);
+  assert.ok(upload, 'the pages artifact is named per attempt');
+  assert.ok(use, 'deploy-pages is told which artifact to use');
+  assert.equal(upload[1], use[1], 'upload and deploy use the same name');
+  assert.match(section('test'), /name: playwright-report-\$\{\{ github\.run_attempt \}\}/);
+  // no other step may upload an artifact with a fixed name
+  const fixed = [...workflow.matchAll(/^\s+name: ([a-z-]+)\s*$/gm)].map((m) => m[1]).filter((n) => /^(github-pages|playwright-report)$/.test(n));
+  assert.deepEqual(fixed, ['github-pages'], 'only the environment is called github-pages (not an artifact)');
+});
+
 test('the workflow does not point the browser tests at an outside site', () => {
   assert.ok(!/SITE_URL/.test(workflow), 'in CI the tests use the local server');
   assert.ok(fs.existsSync(path.join(ROOT, 'package-lock.json')), 'npm ci needs the lock file');
