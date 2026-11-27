@@ -6,13 +6,26 @@ A plain HTML website for Northlight Studio, a 25-person design studio.
 
 - `index.html`, `contact.js`, `images/`: the home page with a header, three services, an FAQ (with JSON-LD) and a contact form. A sent form creates a ticket in the help desk storage of the visitor's browser; nothing is sent over the internet.
 - `helpdesk.html`, `helpdesk.js`, `helpdesk.css`, `helpdesk-store.js`: a demo helpdesk (fake data, tickets saved in localStorage). `helpdesk-store.js` holds the storage and priority rules shared with the contact form.
+- `crm.html`, `crm.js`: a small demo CRM (see below).
 - `troubleshoot.html`: a click-through decision tree for "no internet".
 - `staff.html`, `staff.js`: a learning model of staff accounts (see below).
-- `tests/`: tests for the staff page and for the home page and contact form (`node tests/index.test.js`).
+- `tests/`: tests for the staff page, the CRM, and the home page and contact form (for example `node tests/index.test.js`).
 - `tools/`: read-only Node.js scripts (see below).
 - `.github/workflows/deploy.yml`: GitHub Actions workflow that deploys the site to GitHub Pages.
 
 There are no frameworks, no dependencies and no build step. The repository root is published as it is.
+
+## CRM
+
+`crm.html` is a small CRM with fake data, saved in localStorage. It has leads, accounts, contacts, opportunities and support cases.
+
+- **Convert** turns an open lead into an account (the lead's company), a contact (the lead's person) and an opportunity (the lead's estimated value). It is all or nothing, and a lead can be converted once. A new opportunity starts at the first stage, **Lead**.
+- Opportunity stages are Lead, Qualified, Quote, Won and Lost. Change a stage from the dropdown on the opportunity.
+- A support case has a priority (P1 to P3) and a due time. The due time is prefilled from the help desk response targets (1 h, 4 h, 24 h) and can be changed. An open case past its due time is labelled **Overdue**.
+- The **Opportunities by stage** chart is plain SVG, no libraries: one colour, a value at the end of each bar, a hover and keyboard tooltip, and a "View as table" version of the same numbers. It has light and dark colours.
+- It starts with three fake leads and one case. If the stored data is damaged, the page restores the demo data and keeps the damaged copy under the key `northlight-crm-v1-invalid`.
+
+Run the tests with `node tests/crm.test.js`.
 
 ## Staff accounts (learning model)
 
