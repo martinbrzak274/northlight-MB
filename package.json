@@ -1,0 +1,12 @@
+{
+  "name": "northlight-studio",
+  "private": true,
+  "description": "Northlight Studio demo site. The site itself has no dependencies and no build step; Playwright is only used to test it.",
+  "scripts": {
+    "serve": "node tools/serve.js",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1"
+  }
+}

@@ -9,14 +9,38 @@ A plain HTML website for Northlight Studio, a 25-person design studio.
 - `crm.html`, `crm.js`: a small demo CRM (see below).
 - `automation.html`, `automation.js`, `rules.json`: rules that run when the website form is sent (see below).
 - `settings.html`, `settings.js`, `config.js`, `health.json`: version, settings and the Export all data button (see below).
-- `troubleshoot.html`: a click-through decision tree for "no internet".
+- `troubleshoot.html`, `troubleshoot.js`: a click-through decision tree for "no internet".
 - `staff.html`, `staff.js`: a learning model of staff accounts (see below).
 - `northlight.cloud.json`: a description of the cloud resources (see below).
-- `tests/`: tests for the pages, for example `node tests/index.test.js`.
-- `tools/`: read-only Node.js scripts and their tests (see below).
-- `.github/workflows/deploy.yml`: GitHub Actions workflow that checks the cloud description and then deploys the site to GitHub Pages.
+- `tests/`: tests for the pages, for example `node tests/index.test.js`. `tests/e2e/` holds the browser tests (see below).
+- `tools/`: read-only Node.js scripts and their tests (see below), and `tools/serve.js`, a small local web server.
+- `package.json`, `package-lock.json`, `playwright.config.js`: only for the browser tests.
+- `.github/workflows/deploy.yml`: GitHub Actions workflow that checks the cloud description, runs the browser tests and then deploys the site to GitHub Pages.
 
-There are no frameworks, no dependencies and no build step. The repository root is published as it is.
+The site itself has no frameworks, no dependencies and no build step. The repository root is published as it is. Playwright is a development dependency for the tests only.
+
+## Browser tests and security checks
+
+The tests in `tests/e2e/` run in a real browser with [Playwright](https://playwright.dev). They check that:
+
+- markup typed into the website form and the help desk form (for example `<b>`, `<img onerror=...>`, `<script>`) is shown as plain text everywhere it appears, and never runs
+- a Design or Sales user cannot see the admin section of `staff.html`, even by un-hiding it, while an IT user can
+- an empty form shows a clear message and saves nothing (the website form and the CRM forms show their own messages; the help desk and sign-in forms use the browser's "required" message)
+- every page has a content security policy meta tag, the policy is strict, and the browser really enforces it
+- the repository contains no password, key or token. Only the fake demo logins on `staff.html` are allowed, by exact value. Files that normally hold secrets (such as `.env` or `*.pem`) are not allowed at all, and `.gitignore` keeps them out
+
+Every browser test also fails if the page breaks its content security policy, throws an error, opens an alert, or asks for anything from outside the site.
+
+**Run them:** once, `npm ci` and `npx playwright install chromium`. Then `npx playwright test`. This starts `tools/serve.js` (port 4173, or set `PORT`) and tests the site from it.
+
+- `SITE_URL=https://example.github.io/northlight-MB/ npx playwright test` tests a site that is already published instead. The local server is then not started. A folder opened from disk also works, for example `SITE_URL=file:///C:/path/to/northlight-MB/`.
+- `PW_CHANNEL=msedge` (or `chrome`) uses a browser that is already installed, so nothing needs to be downloaded.
+- `npx playwright test --project=repo` runs only the repository check, which needs no browser.
+- `node tests/csp.test.js` and `node tests/serve.test.js` are quick checks without a browser.
+
+The workflow runs the browser tests in a `test` job, in parallel with the cloud check. If either fails, the site is not deployed. The report is kept as a workflow artifact for 7 days.
+
+**About the content security policy:** it is set in a meta tag in every page, because GitHub Pages cannot send headers. It allows scripts only from the site itself (no inline scripts), allows inline styles (the pages keep their styles in the page), and blocks all other requests, forms that send data anywhere, `<base>` tags and plugins. A meta tag cannot set `frame-ancestors`, so it does not stop other sites from showing these pages in a frame. That needs a real header, which a different host could send.
 
 ## Settings, health and data export
 

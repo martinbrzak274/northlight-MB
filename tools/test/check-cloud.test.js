@@ -307,13 +307,34 @@ test('the workflow runs the checker in a job that the deploy job waits for', () 
   const check = section('check');
   const deploy = section('deploy');
   assert.match(check, /run: node tools\/check-cloud\.js/);
-  assert.match(deploy, /^ {4}needs: check$/m, 'deploy needs check');
+  assert.match(deploy, /^ {4}needs: \[check, test\]$/m, 'deploy needs both check and test');
   assert.ok(!/deploy-pages/.test(check), 'the check job does not deploy');
   assert.ok(workflow.indexOf('  check:') < workflow.indexOf('  deploy:'));
 });
 
+test('the workflow runs the browser tests in a job that the deploy job also waits for', () => {
+  const testJob = section('test');
+  assert.match(testJob, /run: npm ci$/m, 'installs exactly what package-lock.json says');
+  assert.match(testJob, /run: npx playwright install --with-deps chromium$/m);
+  assert.match(testJob, /run: npx playwright test$/m);
+  assert.match(testJob, /cache: npm/);
+  assert.ok(!/deploy-pages|upload-pages-artifact/.test(testJob), 'the test job does not deploy');
+  assert.ok(testJob.indexOf('npm ci') < testJob.indexOf('playwright install'));
+  assert.ok(testJob.indexOf('playwright install') < testJob.indexOf('playwright test'));
+  // the report is kept even when the tests fail, which is when it is needed
+  assert.match(testJob, /if: \$\{\{ !cancelled\(\) \}\}\n\s+uses: actions\/upload-artifact@v4/);
+  assert.match(testJob, /path: playwright-report\//);
+  assert.ok(workflow.indexOf('  test:') < workflow.indexOf('  deploy:'));
+});
+
+test('the workflow does not point the browser tests at an outside site', () => {
+  assert.ok(!/SITE_URL/.test(workflow), 'in CI the tests use the local server');
+  assert.ok(fs.existsSync(path.join(ROOT, 'package-lock.json')), 'npm ci needs the lock file');
+});
+
 test('only the deploy job gets the Pages permissions', () => {
   assert.ok(!/pages: write|id-token: write/.test(section('check')));
+  assert.ok(!/pages: write|id-token: write/.test(section('test')));
   assert.match(section('deploy'), /pages: write/);
   assert.match(section('deploy'), /id-token: write/);
   const top = workflow.split(/^jobs:/m)[0];
