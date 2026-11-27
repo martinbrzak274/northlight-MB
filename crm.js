@@ -325,6 +325,7 @@
     defaultDue: defaultDue, euro: euro
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else globalThis.NorthlightCrm = api; // lets automation.js use the CRM rules in the browser
 
   // ---------- UI (browser only) ----------
   function initUI() {

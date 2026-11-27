@@ -114,6 +114,7 @@
           <li><a href="#contact">Contact</a></li>
           <li class="nav-tools"><a href="helpdesk.html">Help desk</a></li>
           <li><a href="crm.html">CRM</a></li>
+          <li><a href="automation.html">Automation</a></li>
           <li><a href="troubleshoot.html">No internet?</a></li>
           <li><a href="staff.html">Staff accounts</a></li>
         </ul>
@@ -173,7 +174,7 @@
 
       <section id="contact" aria-labelledby="contact-title">
         <h2 id="contact-title">Contact us</h2>
-        <p>Tell us about your project. This is a demo with fake data: the form creates a ticket in the help desk of this browser and nothing is sent over the internet.</p>
+        <p>Tell us about your project. This is a demo with fake data: sending the form runs the rules in <code>rules.json</code>. It adds a lead to the CRM and a ticket to the help desk of this browser. If your message contains the word "urgent", the ticket becomes P1 and an alert is added to the outbox. Nothing is sent over the internet.</p>
 
         <div id="form-errors" role="alert" tabindex="-1" hidden></div>
         <div id="form-success" role="status" tabindex="-1" hidden></div>
@@ -207,6 +208,7 @@
       <ul>
         <li><a href="helpdesk.html">Help desk</a></li>
         <li><a href="crm.html">CRM</a></li>
+        <li><a href="automation.html">Automation: outbox and log</a></li>
         <li><a href="troubleshoot.html">Troubleshooting: no internet</a></li>
         <li><a href="staff.html">Staff accounts (learning model)</a></li>
       </ul>
@@ -254,6 +256,8 @@
   }
   </script>
   <script src="helpdesk-store.js"></script>
+  <script src="crm.js"></script>
+  <script src="automation.js"></script>
   <script src="contact.js"></script>
 </body>
 </html>

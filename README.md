@@ -7,13 +7,30 @@ A plain HTML website for Northlight Studio, a 25-person design studio.
 - `index.html`, `contact.js`, `images/`: the home page with a header, three services, an FAQ (with JSON-LD) and a contact form. A sent form creates a ticket in the help desk storage of the visitor's browser; nothing is sent over the internet.
 - `helpdesk.html`, `helpdesk.js`, `helpdesk.css`, `helpdesk-store.js`: a demo helpdesk (fake data, tickets saved in localStorage). `helpdesk-store.js` holds the storage and priority rules shared with the contact form.
 - `crm.html`, `crm.js`: a small demo CRM (see below).
+- `automation.html`, `automation.js`, `rules.json`: rules that run when the website form is sent (see below).
 - `troubleshoot.html`: a click-through decision tree for "no internet".
 - `staff.html`, `staff.js`: a learning model of staff accounts (see below).
-- `tests/`: tests for the staff page, the CRM, and the home page and contact form (for example `node tests/index.test.js`).
+- `tests/`: tests for the staff page, the CRM, and the home page and contact form, and the automation rules (for example `node tests/index.test.js`).
 - `tools/`: read-only Node.js scripts (see below).
 - `.github/workflows/deploy.yml`: GitHub Actions workflow that deploys the site to GitHub Pages.
 
 There are no frameworks, no dependencies and no build step. The repository root is published as it is.
+
+## Automation
+
+When the contact form on `index.html` is sent, the rules in `rules.json` run. **Nothing is really sent**: the outbox is only a list kept in this browser.
+
+- `form-create-lead` creates a lead in the CRM storage (source "Website form", company "Not given").
+- `form-create-ticket` creates a ticket in the help desk storage.
+- `urgent-escalate` runs when the message contains the whole word "urgent" (any case): it sets the ticket to P1 and adds an alert to the outbox. Note that "not urgent" also matches, because the rule only looks for the word.
+- Every event and every rule that runs writes a line to the log. If an action fails, that rule stops, the error is logged, and the other rules still run.
+- `automation.html` shows the rules, the outbox and the log.
+
+The rule format is checked strictly: a rule with an unknown action, a missing or misspelt setting or an unknown placeholder is skipped and shown as a problem. A rule can be switched off with `"enabled": false`.
+
+Browsers do not let a page opened from disk (`file://`) read `rules.json`, so `automation.js` also holds a built-in copy of the rules. A test keeps the two identical. The Automation page and every log line say which one was used. **Edits to `rules.json` only take effect when the site is served over http(s), for example on GitHub Pages.** If `rules.json` is broken, the built-in copy is used and a warning is shown, so a message is never lost.
+
+Run the tests with `node tests/automation.test.js`.
 
 ## CRM
 

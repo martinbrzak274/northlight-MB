@@ -96,10 +96,31 @@
     }
   }
 
+  // Impact and urgency that give each priority, used when a rule sets the priority directly.
+  var LEVEL_FOR_PRIORITY = { P1: 3, P2: 2, P3: 1 };
+
+  // Sets a ticket to P1, P2 or P3. Returns { ok: true, ticket, previous } or { ok: false, error }.
+  function setPriority(storage, id, priority, now) {
+    try {
+      if (!Object.prototype.hasOwnProperty.call(LEVEL_FOR_PRIORITY, priority)) return { ok: false, error: 'priority' };
+      var tickets = load(storage, now == null ? Date.now() : now);
+      var ticket = tickets.find(function (x) { return x.id === id; });
+      if (!ticket) return { ok: false, error: 'missing' };
+      var previous = ticket.priority;
+      ticket.impact = LEVEL_FOR_PRIORITY[priority];
+      ticket.urgency = LEVEL_FOR_PRIORITY[priority];
+      ticket.priority = priorityFor(ticket.impact, ticket.urgency);
+      if (!save(storage, tickets)) return { ok: false, error: 'storage' };
+      return { ok: true, ticket: ticket, previous: previous };
+    } catch (e) {
+      return { ok: false, error: 'storage' };
+    }
+  }
+
   var api = {
     STORAGE_KEY: STORAGE_KEY, HOUR: HOUR, TARGET_HOURS: TARGET_HOURS, STATUSES: STATUSES, LEVELS: LEVELS,
     priorityFor: priorityFor, isOverdue: isOverdue, seed: seed, valid: valid,
-    load: load, save: save, createTicket: createTicket
+    load: load, save: save, createTicket: createTicket, setPriority: setPriority
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

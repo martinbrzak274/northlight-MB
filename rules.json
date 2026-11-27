@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "form-create-lead",
+      "description": "When the website form is sent, create a lead in the CRM.",
+      "when": { "event": "form.sent" },
+      "do": [
+        { "action": "crm.createLead", "source": "Website form", "company": "Not given", "value": 0 }
+      ]
+    },
+    {
+      "id": "form-create-ticket",
+      "description": "When the website form is sent, create a ticket in the help desk.",
+      "when": { "event": "form.sent" },
+      "do": [
+        {
+          "action": "helpdesk.createTicket",
+          "requester": "{name}",
+          "issue": "Website enquiry: {message} (reply to {email})",
+          "impact": 1,
+          "urgency": 1
+        }
+      ]
+    },
+    {
+      "id": "urgent-escalate",
+      "description": "If the message contains the word urgent, set the ticket to P1 and add an alert to the outbox.",
+      "when": { "event": "form.sent", "messageContainsWord": "urgent" },
+      "do": [
+        { "action": "helpdesk.setPriority", "priority": "P1" },
+        {
+          "action": "outbox.add",
+          "channel": "alert",
+          "to": "oncall@example.com",
+          "subject": "URGENT enquiry: ticket #{ticket.id}",
+          "body": "{name} ({email}) wrote: {message}"
+        }
+      ]
+    }
+  ]
+}

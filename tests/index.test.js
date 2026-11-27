@@ -76,7 +76,7 @@ test('no outside scripts, styles, fonts or images', () => {
 
 test('header links to the other pages, and all links and anchors resolve', () => {
   const header = /<header[\s\S]*?<\/header>/.exec(html)[0];
-  for (const page of ['helpdesk.html', 'crm.html', 'troubleshoot.html', 'staff.html']) {
+  for (const page of ['helpdesk.html', 'crm.html', 'automation.html', 'troubleshoot.html', 'staff.html']) {
     assert.ok(header.includes(`href="${page}"`), 'header missing ' + page);
     assert.ok(fs.existsSync(path.join(ROOT, page)), page + ' does not exist');
   }
@@ -86,6 +86,14 @@ test('header links to the other pages, and all links and anchors resolve', () =>
     if (href.startsWith('#')) assert.ok(ids.has(href.slice(1)), 'broken anchor ' + href);
     else assert.ok(fs.existsSync(path.join(ROOT, href)), 'broken link ' + href);
   }
+});
+
+test('the form page loads the scripts the rules need, in order', () => {
+  const order = ['helpdesk-store.js', 'crm.js', 'automation.js', 'contact.js'].map((f) => html.indexOf('<script src="' + f + '"></script>'));
+  assert.ok(order.every((i) => i > 0), 'a script tag is missing');
+  assert.deepEqual(order, [...order].sort((a, b) => a - b), 'scripts are out of order');
+  assert.ok(fs.existsSync(path.join(ROOT, 'rules.json')));
+  assert.match(html, /rules.json/, 'the page tells visitors about the rules');
 });
 
 test('three services and four FAQ questions', () => {
@@ -165,9 +173,11 @@ test('message length limits say how far off you are', () => {
   assert.match(Contact.validate({ ...good, message: 'x'.repeat(201) }).errors.message, /201 characters.*200 or fewer/);
 });
 
-test('the longest allowed enquiry still fits the help desk issue field (300 characters)', () => {
-  const v = Contact.validate({ name: 'N'.repeat(60), email: 'a'.repeat(48) + '@example.com', message: 'm'.repeat(200) }).values;
-  assert.ok(Contact.buildIssue(v).length <= 300, 'issue is ' + Contact.buildIssue(v).length);
+test('the longest allowed enquiry still fits the help desk issue field whole (300 characters)', () => {
+  const r = Contact.submit(fakeStorage(), { name: 'N'.repeat(60), email: 'a'.repeat(48) + '@example.com', message: 'm'.repeat(200) }, NOW);
+  assert.equal(r.ok, true);
+  assert.ok(r.ticket.issue.length <= 300, 'issue is ' + r.ticket.issue.length);
+  assert.ok(r.ticket.issue.endsWith('(reply to ' + 'a'.repeat(48) + '@example.com)'), 'not cut off');
 });
 
 // ---------- ticket creation in the help desk storage ----------
